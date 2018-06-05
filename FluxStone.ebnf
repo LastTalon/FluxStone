@@ -12,12 +12,26 @@ line ending = ? ASCII 0x0a (Line Feed) ? , [ ? ASCII 0x0d (Carriage Return) ? ] 
 
 inline comment = "#" , { ? All Characters ? - line ending } , line ending ;
 block comment  = "(*" , { ? All Characters ? - "*)" } , "*)" ;
+space          = whitespace | block comment ;
 
-space      = { whitespace | block comment } ;
-terminator = [ ";" ] , { space | inline comment | line ending } , inline comment | line ending
+string = '"' , { ? All Characters ? - '"' } , '"'
+       | "'" , { ? All Characters ? - "'" } , "'" ; (* Still needs support for escape codes *)
+number = [ "-" ] , ( digit - "0" , { digit } | "0" ) , [ "." , digit, { digit } ], [ ("e" | "E") , [ "+" | "-" ] , digit , { digit } ] ;
+bool   = ( "t" | "T" ) , ( "r" | "R" ) , ( "u" | "U" ) , ( "e" | "E" )
+       | ( "f" | "F" ) , ( "a" | "A" ) , ( "l" | "L" ) , ( "s" | "S" ) , ( "e" | "E" ) ;
+null   = ( "n" | "N" ) , ( "u" | "U" ) , ( "l" | "L" ) , ( "l" | "L" ) ;
+object = "{" , { space | inline comment | line ending | pair } , "}" ;
+list   = "[" , { space | inline comment | line ending | value , { space } , terminator } , "]" ;
+
+terminator = [ ";" ] , { space | inline comment | line ending } , ( inline comment | line ending )
            | ";" , { space } ;
-key        = letter | "_" , { letter | digit | "_" } ;
-value      = 
+key        = ( letter | "_" ) , { letter | digit | "_" } ;
+value      = string
+           | number
+           | bool
+           | object
+           | list
+           | null ;
 
-pair = key , { space } , ":" , { space } , value , { space } , terminator ;
+pair = { space } , key , { space } , ":" , { space } , value , { space } , terminator ;
 flux = { pair } ;
