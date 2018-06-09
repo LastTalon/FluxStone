@@ -36,4 +36,4 @@ value      = string
            | null ;
 
 pair = { space } , key , { space } , ":" , { space } , value , { space } , terminator ;
-flux = { terminator } , { pair } ;
+flux = { space | inline comment | line ending } , { pair } ;
