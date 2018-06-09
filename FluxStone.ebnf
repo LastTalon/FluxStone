@@ -8,13 +8,14 @@ letter      = "A" | "B" | "C" | "D" | "E" | "F" | "G"
             | "x" | "y" | "z" ;
 digit       = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 whitespace  = ? ASCII 0x20 (Space) ? | ? ASCII 0x09 (Tab) ? ;
-line ending = [ ? ASCII 0x0d (Carriage Return) ? ] , ? ASCII 0x0a (Line Feed) ? ;
+eol         = [ ? ASCII 0x0d (Carriage Return) ? ] , ? ASCII 0x0a (Line Feed) ? ;
 
-inline comment = "#" , { ? All Characters ? - line ending } , line ending
-               | "//" , { ? All Characters ? - line ending } , line ending ;
+inline comment = "#" , { ? All Characters ? - eol } , eol
+               | "//" , { ? All Characters ? - eol } , eol ;
 block comment  = "(*" , { ? All Characters ? - "*)" } , "*)"
                | "/*" , { ? All Characters ? - "*/" } , "*/" ;
 space          = whitespace | block comment ;
+line ending    = inline comment | eol ;
 
 string = '"' , { ? All Characters ? - '"' } , '"'
        | "'" , { ? All Characters ? - "'" } , "'" ; (* Still needs support for escape codes *)
@@ -22,10 +23,10 @@ number = [ "-" ] , ( digit - "0" , { digit } | "0" ) , [ "." , digit, { digit } 
 bool   = ( "t" | "T" ) , ( "r" | "R" ) , ( "u" | "U" ) , ( "e" | "E" )
        | ( "f" | "F" ) , ( "a" | "A" ) , ( "l" | "L" ) , ( "s" | "S" ) , ( "e" | "E" ) ;
 null   = ( "n" | "N" ) , ( "u" | "U" ) , ( "l" | "L" ) , ( "l" | "L" ) ;
-object = "{" , { space | inline comment | line ending | pair } , "}" ;
-list   = "[" , { space | inline comment | line ending | value , { space } , terminator } , "]" ;
+object = "{" , { space | line ending | pair } , "}" ;
+list   = "[" , { space | line ending | value , { space } , terminator } , "]" ;
 
-terminator = [ ";" ] , { space | inline comment | line ending } , ( inline comment | line ending )
+terminator = [ ";" ] , { space } , line ending
            | ";" , { space } ;
 key        = ( letter | "_" ) , { letter | digit | "_" } ;
 value      = string
@@ -35,5 +36,5 @@ value      = string
            | list
            | null ;
 
-pair = { space } , key , { space } , ":" , { space } , value , { space } , terminator ;
-flux = { space | inline comment | line ending } , { pair } ;
+pair = key , { space } , ":" , { space } , value , { space } , terminator ;
+flux = { space | line ending | pair } ;
