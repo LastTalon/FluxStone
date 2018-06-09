@@ -10,8 +10,10 @@ digit       = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 whitespace  = ? ASCII 0x20 (Space) ? | ? ASCII 0x09 (Tab) ? ;
 line ending = ? ASCII 0x0a (Line Feed) ? , [ ? ASCII 0x0d (Carriage Return) ? ] ;
 
-inline comment = "#" , { ? All Characters ? - line ending } , line ending ;
-block comment  = "(*" , { ? All Characters ? - "*)" } , "*)" ;
+inline comment = "#" , { ? All Characters ? - line ending } , line ending
+               | "//" , { ? All Characters ? - line ending } , line ending ;
+block comment  = "(*" , { ? All Characters ? - "*)" } , "*)"
+               | "/*" , { ? All Characters ? - "*/" } , "*/" ;
 space          = whitespace | block comment ;
 
 string = '"' , { ? All Characters ? - '"' } , '"'
@@ -34,4 +36,4 @@ value      = string
            | null ;
 
 pair = { space } , key , { space } , ":" , { space } , value , { space } , terminator ;
-flux = { pair } ;
+flux = { terminator } , { pair } ;
