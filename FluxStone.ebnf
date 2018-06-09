@@ -8,7 +8,7 @@ letter      = "A" | "B" | "C" | "D" | "E" | "F" | "G"
             | "x" | "y" | "z" ;
 digit       = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 whitespace  = ? ASCII 0x20 (Space) ? | ? ASCII 0x09 (Tab) ? ;
-line ending = ? ASCII 0x0a (Line Feed) ? , [ ? ASCII 0x0d (Carriage Return) ? ] ;
+line ending = [ ? ASCII 0x0d (Carriage Return) ? ] , ? ASCII 0x0a (Line Feed) ? ;
 
 inline comment = "#" , { ? All Characters ? - line ending } , line ending
                | "//" , { ? All Characters ? - line ending } , line ending ;
