@@ -27,7 +27,7 @@ null   = ( "n" | "N" ) , ( "u" | "U" ) , ( "l" | "L" ) , ( "l" | "L" ) ;
 object = "{" , flux , "}" ;
 list   = "[" , { space | line ending | value } , "]" ;
 
-terminator = [ ";" ] , { space } , line ending
+terminator = { space } , line ending
            | ";" ;
 term       = string
            | number
