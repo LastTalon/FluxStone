@@ -1,3 +1,4 @@
+character   = ? All Characters ?
 letter      = "A" | "B" | "C" | "D" | "E" | "F" | "G"
             | "H" | "I" | "J" | "K" | "L" | "M" | "N"
             | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
@@ -10,31 +11,33 @@ digit       = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 whitespace  = ? ASCII 0x20 (Space) ? | ? ASCII 0x09 (Tab) ? ;
 eol         = [ ? ASCII 0x0d (Carriage Return) ? ] , ? ASCII 0x0a (Line Feed) ? ;
 
-inline comment = "#" , { ? All Characters ? - eol } , eol
-               | "//" , { ? All Characters ? - eol } , eol ;
-block comment  = "(*" , { ? All Characters ? - "*)" } , "*)"
-               | "/*" , { ? All Characters ? - "*/" } , "*/" ;
+inline comment = "#" , { character - eol } , eol
+               | "//" , { character - eol } , eol ;
+block comment  = "(*" , { character - "*)" } , "*)"
+               | "/*" , { character - "*/" } , "*/" ;
 space          = whitespace | block comment ;
 line ending    = inline comment | eol ;
 
-string = '"' , { ? All Characters ? - '"' } , '"'
-       | "'" , { ? All Characters ? - "'" } , "'" ; (* Still needs support for escape codes *)
+string = '"' , { character - '"' } , '"'
+       | "'" , { character - "'" } , "'" ; (* Still needs support for escape codes *)
 number = [ "-" ] , ( digit - "0" , { digit } | "0" ) , [ "." , digit, { digit } ], [ ("e" | "E") , [ "+" | "-" ] , digit , { digit } ] ;
 bool   = ( "t" | "T" ) , ( "r" | "R" ) , ( "u" | "U" ) , ( "e" | "E" )
        | ( "f" | "F" ) , ( "a" | "A" ) , ( "l" | "L" ) , ( "s" | "S" ) , ( "e" | "E" ) ;
 null   = ( "n" | "N" ) , ( "u" | "U" ) , ( "l" | "L" ) , ( "l" | "L" ) ;
-object = "{" , { space | line ending | pair } , "}" ;
-list   = "[" , { space | line ending | value , { space } , terminator } , "]" ;
+object = "{" , flux , "}" ;
+list   = "[" , { space | line ending | value } , "]" ;
 
 terminator = [ ";" ] , { space } , line ending
            | ";" , { space } ;
-key        = ( letter | "_" ) , { letter | digit | "_" } ;
-value      = string
+term       = string
            | number
            | bool
+           | null
            | object
-           | list
-           | null ;
+           | list ;
 
-pair = key , { space } , ":" , { space } , value , { space } , terminator ;
+key        = ( letter | "_" ) , { letter | digit | "_" } ;
+value      = term , { space } , terminator ;
+
+pair = key , { space } , ":" , { space } , value ;
 flux = { space | line ending | pair } ;
