@@ -1,5 +1,5 @@
 <div align="center">
-	# FluxStone
+	<h1>FluxStone</h1>
 </div>
 <hr />
 
@@ -19,7 +19,7 @@ Coming soon:
 
 The format is meant to be simple, human readable/writable, and allow the language-independent expression of data.
 
-Learn more about the [FluxStone's format](FORMAT.md).
+Learn more about [FluxStone's format](FORMAT.md).
 
 ## Inspiration
 
