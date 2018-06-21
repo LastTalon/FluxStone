@@ -8,6 +8,7 @@ letter     = "A" | "B" | "C" | "D" | "E" | "F" | "G"
            | "q" | "r" | "s" | "t" | "u" | "v" | "w"
            | "x" | "y" | "z" ;
 digit      = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+hex digit  = digit | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" | "f" ;
 whitespace = ? ASCII 0x20 (Space) ? | ? ASCII 0x09 (Tab) ? ;
 eol        = [ ? ASCII 0x0d (Carriage Return) ? ] , ? ASCII 0x0a (Line Feed) ? ;
 
@@ -18,8 +19,18 @@ block comment  = "(*" , { character - "*)" } , "*)"
 space          = whitespace | block comment ;
 line ending    = inline comment | eol ;
 
-string = '"' , { character - '"' } , '"'
-       | "'" , { character - "'" } , "'" ; (* Still needs support for escape codes *)
+escape code     = "\"
+                | "'"
+                | '"'
+                | "n"
+                | "r"
+                | "f"
+                | "t"
+                | "u" , hex digit , hex digit , hex digit , hex digit ;
+escape sequence = "\" , escape code ;
+
+string = '"' , { character - '"' - "\" | escape sequence } , '"'
+       | "'" , { character - "'" - "\" | escape sequence } , "'" ; (* Still needs support for escape codes *)
 number = [ "-" ] , ( digit - "0" , { digit } | "0" ) , [ "." , digit, { digit } ], [ ("e" | "E") , [ "+" | "-" ] , digit , { digit } ] ;
 bool   = ( "t" | "T" ) , ( "r" | "R" ) , ( "u" | "U" ) , ( "e" | "E" )
        | ( "f" | "F" ) , ( "a" | "A" ) , ( "l" | "L" ) , ( "s" | "S" ) , ( "e" | "E" ) ;
