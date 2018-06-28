@@ -47,7 +47,7 @@ term       = string
            | object
            | list ;
 
-key   = ( letter | "_" ) , { letter | digit | "_" } ;
+key   = ( letter | "_" ) , { letter | digit | "_" } | string ;
 value = term , { space } , terminator ;
 
 pair = key , { space } , ":" , { space } , value ;
